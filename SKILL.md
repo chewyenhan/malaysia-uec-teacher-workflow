@@ -27,7 +27,7 @@ metadata:
 - 解析课文、讲义、PDF、DOCX 或图片：读 [references/material-intake.md](references/material-intake.md)。
 - 对照董总/统考考纲：读 [references/syllabus-alignment.md](references/syllabus-alignment.md)。
 - 编写详细教案、评量或跨科活动：读 [references/lesson-design.md](references/lesson-design.md)。
-- 制作简略教案或写入 Excel：读 [references/spreadsheet-adaptation.md](references/spreadsheet-adaptation.md)。
+- 制作简略教案或适配 Excel/Word 校本模板：读 [references/spreadsheet-adaptation.md](references/spreadsheet-adaptation.md)。
 - 制作教学简报或选择 NotebookLM：读 [references/slides-routing.md](references/slides-routing.md)。
 - 处理版权、隐私、署名或发布问题：读 [references/copyright-and-privacy.md](references/copyright-and-privacy.md)。
 
@@ -47,7 +47,7 @@ metadata:
 
 ### 3. 对照考纲，但以证据为准
 
-若用户要求考纲对齐，使用官方公开来源或本机已同步缓存。首次同步可运行：
+若用户要求考纲对齐，使用官方公开来源或本机已同步缓存。首次使用时应询问是否同步完整初、高中官方考纲；获得同意后运行：
 
 ```bash
 python scripts/sync_uec_syllabi.py --level all
@@ -109,4 +109,3 @@ lesson-output/
 ```
 
 只建立本次需要的文件，不制造空白占位文件。
-

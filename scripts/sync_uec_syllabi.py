@@ -14,16 +14,31 @@ import html
 import json
 import re
 import sys
+import time
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urljoin, urlparse
-from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 ALLOWED_HOSTS = {"dongzong.my", "www.dongzong.my", "uec.dongzong.my"}
 DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx", ".xls", ".xlsx"}
 MAX_BYTES = 60 * 1024 * 1024
 USER_AGENT = "malaysia-uec-teacher-workflow/0.1 (+https://github.com/chewyenhan/malaysia-uec-teacher-workflow)"
+
+
+class OfficialOnlyRedirectHandler(HTTPRedirectHandler):
+    """Reject redirects that leave the official Dong Zong host allowlist."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        absolute = urljoin(req.full_url, newurl)
+        if not allowed_url(absolute):
+            raise ValueError(f"Blocked redirect to non-official URL: {absolute}")
+        return super().redirect_request(req, fp, code, msg, headers, absolute)
+
+
+OPENER = build_opener(OfficialOnlyRedirectHandler())
 
 
 class LinkParser(HTMLParser):
@@ -102,18 +117,33 @@ def discover_subject_pages(page_url: str, page_html: str, level: str) -> list[di
     return [found[url] for url in sorted(found)]
 
 
-def fetch_bytes(url: str, max_bytes: int = MAX_BYTES) -> bytes:
+def fetch_bytes(url: str, max_bytes: int = MAX_BYTES, attempts: int = 3) -> bytes:
     if not allowed_url(url):
         raise ValueError(f"Blocked non-official URL: {url}")
-    request = Request(url, headers={"User-Agent": USER_AGENT})
-    with urlopen(request, timeout=30) as response:
-        length = response.headers.get("Content-Length")
-        if length and int(length) > max_bytes:
-            raise ValueError(f"File exceeds {max_bytes} bytes: {url}")
-        data = response.read(max_bytes + 1)
-    if len(data) > max_bytes:
-        raise ValueError(f"File exceeds {max_bytes} bytes: {url}")
-    return data
+    if attempts < 1:
+        raise ValueError("attempts must be at least 1")
+    for attempt in range(1, attempts + 1):
+        request = Request(url, headers={"User-Agent": USER_AGENT})
+        try:
+            with OPENER.open(request, timeout=30) as response:
+                final_url = response.geturl()
+                if not allowed_url(final_url):
+                    raise ValueError(f"Blocked final non-official URL: {final_url}")
+                length = response.headers.get("Content-Length")
+                if length and int(length) > max_bytes:
+                    raise ValueError(f"File exceeds {max_bytes} bytes: {url}")
+                data = response.read(max_bytes + 1)
+            if len(data) > max_bytes:
+                raise ValueError(f"File exceeds {max_bytes} bytes: {url}")
+            return data
+        except HTTPError as exc:
+            if exc.code < 500 or attempt == attempts:
+                raise
+        except (URLError, TimeoutError, ConnectionResetError, OSError):
+            if attempt == attempts:
+                raise
+        time.sleep(0.5 * attempt)
+    raise RuntimeError("unreachable")
 
 
 def safe_filename(url: str, label: str, index: int) -> str:
@@ -125,6 +155,35 @@ def safe_filename(url: str, label: str, index: int) -> str:
         suffix = Path(raw).suffix
         raw = raw[: 140 - len(suffix)] + suffix
     return raw
+
+
+def unique_destination(directory: Path, url: str, label: str, index: int, used: dict[str, str]) -> Path:
+    """Return a stable path without silently colliding with another URL."""
+    filename = safe_filename(url, label, index)
+    key = filename.casefold()
+    if key in used and used[key] != url:
+        suffix = Path(filename).suffix
+        stem = filename[: -len(suffix)] if suffix else filename
+        digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:8]
+        filename = f"{stem}-{digest}{suffix}"
+        key = filename.casefold()
+    used[key] = url
+    return directory / filename
+
+
+def validate_document_payload(url: str, payload: bytes) -> None:
+    """Reject an HTML/error response masquerading as an office document."""
+    suffix = Path(unquote(urlparse(url).path)).suffix.lower()
+    signatures = {
+        ".pdf": (b"%PDF",),
+        ".docx": (b"PK\x03\x04",),
+        ".xlsx": (b"PK\x03\x04",),
+        ".doc": (b"\xd0\xcf\x11\xe0",),
+        ".xls": (b"\xd0\xcf\x11\xe0",),
+    }
+    expected = signatures.get(suffix)
+    if expected and not any(payload.startswith(signature) for signature in expected):
+        raise ValueError(f"Downloaded content does not match {suffix} format: {url}")
 
 
 def load_sources(path: Path) -> dict:
@@ -147,32 +206,66 @@ def main() -> int:
     manifest: dict = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "publisher": config["publisher"],
+        "status": "partial",
+        "levels": [],
         "documents": [],
+        "errors": [],
     }
+    used_destinations: dict[str, dict[str, str]] = {}
 
     for index in indexes:
+        level_record = {
+            "level": index["level"],
+            "index_url": index["url"],
+            "expected_subject_count": index.get("expected_subject_count"),
+            "discovered_subject_count": 0,
+            "subjects_with_documents": 0,
+            "document_count": 0,
+            "status": "partial",
+        }
+        manifest["levels"].append(level_record)
         print(f"Checking {index['title']}: {index['url']}")
         try:
             page = fetch_bytes(index["url"], max_bytes=5 * 1024 * 1024).decode("utf-8", errors="replace")
         except Exception as exc:
             print(f"ERROR: unable to read official index: {exc}", file=sys.stderr)
+            manifest["errors"].append({"level": index["level"], "url": index["url"], "error": str(exc)})
             continue
         documents = discover_documents(index["url"], page)
         subject_pages = discover_subject_pages(index["url"], page, index["level"])
+        level_record["discovered_subject_count"] = len(subject_pages)
         print(f"  discovered {len(subject_pages)} subject pages")
+        expected = index.get("expected_subject_count")
+        if expected is not None and len(subject_pages) != expected:
+            message = f"expected {expected} subjects but found {len(subject_pages)}"
+            manifest["errors"].append({"level": index["level"], "url": index["url"], "error": message})
+            print(f"  ERROR: {message}", file=sys.stderr)
         by_url = {item["url"]: item for item in documents}
         for subject in subject_pages:
             try:
                 subject_html = fetch_bytes(subject["url"], max_bytes=5 * 1024 * 1024).decode("utf-8", errors="replace")
             except Exception as exc:
                 print(f"  ERROR unable to read {subject['label']}: {exc}", file=sys.stderr)
+                manifest["errors"].append({"level": index["level"], "subject": subject["label"], "url": subject["url"], "error": str(exc)})
                 continue
-            for document in discover_documents(subject["url"], subject_html):
+            subject_documents = discover_documents(subject["url"], subject_html)
+            if not subject_documents:
+                message = "no official document discovered on subject page"
+                manifest["errors"].append({"level": index["level"], "subject": subject["label"], "url": subject["url"], "error": message})
+                print(f"  ERROR {subject['label']}: {message}", file=sys.stderr)
+                continue
+            level_record["subjects_with_documents"] += 1
+            for document in subject_documents:
                 document["subject"] = subject["label"]
                 document["detail_url"] = subject["url"]
                 by_url[document["url"]] = document
         documents = [by_url[url] for url in sorted(by_url)]
+        level_record["document_count"] = len(documents)
         print(f"  discovered {len(documents)} official documents")
+        level_errors = [error for error in manifest["errors"] if error.get("level") == index["level"]]
+        if level_record["subjects_with_documents"] == len(subject_pages) and not level_errors:
+            level_record["status"] = "complete"
+        level_destinations = used_destinations.setdefault(index["level"], {})
         for number, document in enumerate(documents, start=1):
             record = {**document, "level": index["level"], "index_url": index["url"]}
             if args.list_only:
@@ -181,10 +274,19 @@ def main() -> int:
             else:
                 try:
                     payload = fetch_bytes(document["url"])
+                    validate_document_payload(document["url"], payload)
                     level_dir = args.cache_dir / index["level"]
                     level_dir.mkdir(parents=True, exist_ok=True)
-                    destination = level_dir / safe_filename(document["url"], document["label"], number)
-                    destination.write_bytes(payload)
+                    destination = unique_destination(
+                        level_dir, document["url"], document["label"], number, level_destinations
+                    )
+                    temporary = destination.with_name(destination.name + ".part")
+                    try:
+                        temporary.write_bytes(payload)
+                        temporary.replace(destination)
+                    finally:
+                        if temporary.exists():
+                            temporary.unlink()
                     record.update({
                         "path": str(destination.resolve()),
                         "bytes": len(payload),
@@ -193,17 +295,20 @@ def main() -> int:
                     print(f"  saved {destination.name}")
                 except Exception as exc:
                     record["error"] = str(exc)
+                    level_record["status"] = "partial"
+                    manifest["errors"].append({"level": index["level"], "url": document["url"], "error": str(exc)})
                     print(f"  ERROR {document['url']}: {exc}", file=sys.stderr)
             manifest["documents"].append(record)
 
+    manifest["status"] = "complete" if manifest["documents"] and not manifest["errors"] else "partial"
     if not args.list_only:
         args.cache_dir.mkdir(parents=True, exist_ok=True)
         manifest_path = args.cache_dir / "manifest.json"
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"Manifest: {manifest_path}")
 
-    if not manifest["documents"]:
-        print("No documents were discovered. Open the official index URLs manually; their page structure may have changed.", file=sys.stderr)
+    if manifest["status"] != "complete":
+        print("Syllabus sync is incomplete. Review manifest errors and the official index pages.", file=sys.stderr)
         return 2
     return 0
 

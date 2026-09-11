@@ -8,7 +8,7 @@
 
 ### DOCX
 
-按文档顺序交错读取段落与表格，不要只使用 `document.paragraphs`。记录标题层级、页眉页脚中有教学意义的内容、表格结构、内嵌图片及相邻图注。必要时可运行：
+按文档顺序交错读取段落与表格，不要只使用 `document.paragraphs`。记录标题层级、页眉页脚中有教学意义的内容、表格结构、内嵌图片及相邻图注。可用下列脚本做结构盘点，但它不能代替渲染后的逐页视觉检查：
 
 ```bash
 python scripts/inspect_docx.py path/to/material.docx
@@ -48,4 +48,3 @@ python scripts/inspect_docx.py path/to/material.docx
 - 抽查开头、末段、标题数、表格数、图片数及总页数/字数。
 - 课文表述与一般知识冲突时，保留原文并提示教师核对，不静默改写。
 - 生成内容必须能追溯到课文、教师补充资料或明确标注的外部来源。
-

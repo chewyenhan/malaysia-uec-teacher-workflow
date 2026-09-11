@@ -11,6 +11,10 @@ teaching:
   default_level: ""
   default_period_minutes: null
   week_label_format: ""
+  syllabus_cache:
+    directory: ""
+    sync_on_first_use: "ask"
+    last_complete_sync: ""
 
 outputs:
   root_directory: ""
@@ -26,4 +30,3 @@ outputs:
 privacy:
   allow_upload_to_third_party_services: false
   retain_source_copies_in_output: false
-

@@ -2,7 +2,13 @@
 
 Copyright © 2026 Chew Yen Han（朱彦翰）
 
-This repository uses two licenses.
+This repository uses two licenses. The path table below is authoritative for repository-owned material.
+
+| Paths | License |
+|---|---|
+| `SKILL.md`, `README.md`, `NOTICE.md`, `CONTRIBUTING.md`, `CITATION.cff`, `agents/`, `references/`, `evals/`, `.github/`, and example configuration files | CC BY-NC-SA 4.0 |
+| `scripts/` and `tests/` | MIT License |
+| `.gitignore` and purely mechanical metadata | No copyright claim |
 
 ## Educational workflow and documentation
 
@@ -42,7 +48,6 @@ SOFTWARE.
 
 ## User materials and generated outputs
 
-This license does not grant rights to textbooks, school templates, student data, images, or other materials supplied by users or owned by third parties. Using this workflow does not automatically change ownership of user-provided materials or generated outputs.
+This license does not grant rights to textbooks, school templates, student data, images, or other materials supplied by users or owned by third parties. Using this workflow does not automatically change ownership of user-provided materials or generated outputs. However, an output that directly copies or adapts CC BY-NC-SA material from this repository may still carry the applicable attribution, non-commercial and ShareAlike obligations; ownership and licence obligations are separate questions.
 
 The copyright holder may offer separate commercial licences, services, training, customisation, or future premium components.
-

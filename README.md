@@ -77,7 +77,7 @@ python scripts/sync_uec_syllabi.py --level all
 python scripts/sync_uec_syllabi.py --level all --list-only
 ```
 
-脚本只接受董总官方域名，并为下载文件记录来源网址、时间与 SHA-256。网页结构若改变，脚本会停止并请使用者直接查看官方入口，不会改从非官方网站下载。
+脚本只接受董总官方域名及官方域名内的重定向，并为下载文件记录来源网址、时间与 SHA-256。当前完整性基线为初中 8 科、高中 25 科；任何入口、科目页或文件失败都会标记为不完整并返回错误。网页结构若改变，脚本会停止并请使用者直接查看官方入口，不会改从非官方网站下载。
 
 ## 简报路线
 
@@ -107,7 +107,7 @@ malaysia-uec-teacher-workflow/
 
 ## 项目状态
 
-目前核心版本免费公开，方便独中教师试用、检验不同科目与校本格式并提供意见。这不代表所有未来服务或增强功能永久免费；未来可能提供收费培训、安装配置、校本模板定制、批量工具及技术支持。
+目前核心版本免费公开，方便独中教师试用、检验不同科目与校本格式并提供意见。已经发布的版本继续受当时许可证约束；未来的新组件或服务可能采用不同授权，并可能提供收费培训、安装配置、校本模板定制、批量工具及技术支持。
 
 ## 版权与教材边界
 
@@ -137,4 +137,3 @@ malaysia-uec-teacher-workflow/
 The repository does not bundle Dong Zong textbooks or private school materials. It supports junior and senior levels, adapts to each school's timetable and templates, and selects presentation tools according to the user's needs and the AI environment's actual capabilities.
 
 Search terms: 马来西亚独中、华文独中、董总、统考、教案、简略教案、教学简报、UEC、Dong Zong、Chinese Independent School、lesson plan、teacher workflow、AI skill.
-
