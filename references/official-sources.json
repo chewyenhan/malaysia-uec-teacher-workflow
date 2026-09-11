@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "publisher": "United Chinese School Committees' Association of Malaysia (Dong Zong)",
+  "notice": "Official entry points only. Files are downloaded to a local cache and are not redistributed by this repository.",
+  "syllabus_indexes": [
+    {
+      "id": "junior-uec",
+      "level": "junior",
+      "title": "Junior UEC syllabus/specification index",
+      "url": "https://uec.dongzong.my/?page_id=479"
+    },
+    {
+      "id": "senior-uec",
+      "level": "senior",
+      "title": "Senior UEC syllabus/specification index",
+      "url": "https://uec.dongzong.my/?page_id=80"
+    }
+  ],
+  "teaching_design": [
+    {
+      "title": "Dong Zong teaching activity design form",
+      "url": "https://www.dongzong.my/wp-content/uploads/2025/02/%E3%80%90%E9%99%84%E4%BB%B6%E4%BA%8C%E3%80%91%E6%95%99%E5%AD%A6%E6%B4%BB%E5%8A%A8%E8%AE%BE%E8%AE%A1%E8%A1%A8.pdf"
+    },
+    {
+      "title": "Dong Zong education blueprint, assessment chapter",
+      "url": "https://dzblueprint.dongzong.my/images/pdf/chapter08.pdf"
+    }
+  ]
+}
+

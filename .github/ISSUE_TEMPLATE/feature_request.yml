@@ -1,0 +1,18 @@
+name: Feature request
+description: 建议新的科目、模板或教学工作流支持
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: teaching_problem
+    attributes:
+      label: 教学问题
+      description: 先说明教师现在遇到什么问题，而不只指定工具。
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: 匿名化例子
+      description: 可提供自写小样；请勿上传受版权保护的教材或个人资料。
+

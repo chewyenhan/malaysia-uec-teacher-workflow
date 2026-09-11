@@ -1,0 +1,29 @@
+profile_version: 1
+
+teacher:
+  display_name: ""
+  school: ""
+  preferred_language: "zh-Hans"
+
+teaching:
+  curriculum: "Dong Zong / UEC"
+  default_subject: ""
+  default_level: ""
+  default_period_minutes: null
+  week_label_format: ""
+
+outputs:
+  root_directory: ""
+  detailed_lesson_plan_format: "markdown"
+  concise_plan:
+    enabled_by_default: false
+    template_path: ""
+  slides:
+    enabled_by_default: false
+    preferred_route: "auto"
+    preferred_style: ""
+
+privacy:
+  allow_upload_to_third_party_services: false
+  retain_source_copies_in_output: false
+

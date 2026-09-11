@@ -1,0 +1,27 @@
+name: Bug report
+description: 报告工作流或脚本问题，请勿上传教材或学生资料
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题
+      description: 说明预期结果和实际结果；请使用自写或匿名化材料重现。
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 使用环境
+      description: AI 工具、操作系统、Python 版本及相关输出格式。
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私与版权确认
+      options:
+        - label: 我没有上传课本扫描页、学生个人资料、学校内部文件或密钥。
+          required: true
+

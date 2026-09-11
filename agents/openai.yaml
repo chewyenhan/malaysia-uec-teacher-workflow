@@ -1,0 +1,7 @@
+interface:
+  display_name: "Malaysia UEC Teacher Workflow"
+  short_description: "独中跨科教案、简略教案、简报与评量工作流"
+  default_prompt: "Use $malaysia-uec-teacher-workflow to turn my lesson materials into a source-grounded lesson plan and the teaching outputs I request."
+policy:
+  allow_implicit_invocation: true
+

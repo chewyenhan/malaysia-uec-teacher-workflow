@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+teacher-profile.yml
+lesson-output/
+syllabi-cache/
+*.log
+.DS_Store
+Thumbs.db
+
