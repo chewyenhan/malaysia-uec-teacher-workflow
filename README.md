@@ -42,6 +42,8 @@
 
 ## 安装
 
+推荐从 [最新 Release](https://github.com/chewyenhan/malaysia-uec-teacher-workflow/releases/latest) 下载完整 ZIP；Release 附件的下载次数可供项目维护者统计。也可以使用 Git clone：
+
 下载或 clone 本仓库，把整个 `malaysia-uec-teacher-workflow` 文件夹放入你的 AI 助手所使用的 skills 目录。不同工具的目录位置不同，请以该工具当前版本的官方说明为准。
 
 ```bash
@@ -125,6 +127,15 @@ malaysia-uec-teacher-workflow/
 - 教师自行上传的课文、模板及生成成果：不因使用本仓库而自动改变原有权属
 
 详情见 [LICENSE.md](LICENSE.md)。
+
+### 商业使用与授权
+
+- 教师个人、学校内部的非商业教学使用，可依 CC BY-NC-SA 4.0 条款使用本项目的工作流与文档。
+- `scripts/` 与 `tests/` 采用 MIT License，可在保留版权声明及许可文本的前提下商业使用。
+- 将工作流、文档、参考资料或其改编版本用于收费培训、收费安装、商业产品、付费平台或其他主要追求商业利益的用途，不属于 CC BY-NC-SA 4.0 所允许的非商业使用；请先取得书面商业授权。
+- 商业授权、培训、安装配置或校本定制需求，请通过 [商业授权咨询](https://github.com/chewyenhan/malaysia-uec-teacher-workflow/issues/new?template=commercial-license.yml) 联系。提交公开 Issue 时请勿填写电话号码、私人邮箱、学生资料、学校内部文件或 API 密钥。
+
+如果你正在使用本项目，欢迎提交一份不含私人资料的 [使用登记](https://github.com/chewyenhan/malaysia-uec-teacher-workflow/issues/new?template=usage-report.yml)。登记完全自愿，不影响任何许可证权利。
 
 ## 参与改进
 

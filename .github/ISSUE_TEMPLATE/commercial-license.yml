@@ -1,0 +1,42 @@
+name: 商业授权咨询
+description: 咨询商业使用、培训、安装配置或校本定制
+title: "[商业授权] "
+labels: ["commercial-license"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你的咨询。请只填写可公开的信息；不要提交电话号码、私人邮箱、学生资料、学校内部文件或 API 密钥。
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: 需求类型
+      options:
+        - 商业使用授权
+        - 收费培训
+        - 安装与配置
+        - 校本模板定制
+        - 其他合作
+    validations:
+      required: true
+  - type: textarea
+    id: organisation
+    attributes:
+      label: 机构与使用场景
+      description: 请说明机构类型、预期使用方式及大致使用人数，不必提供敏感资料。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 所需范围
+      description: 请说明希望使用、安装或定制的功能。
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我确认本 Issue 不包含学生资料、学校内部文件、私人联系方式或 API 密钥。
+          required: true

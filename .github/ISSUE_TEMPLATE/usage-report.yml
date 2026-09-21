@@ -1,0 +1,44 @@
+name: 使用登记
+description: 自愿分享使用科目、年级与体验，帮助改进工作流
+title: "[使用登记] "
+labels: ["usage-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢你使用本项目。登记完全自愿，请勿上传课本扫描页、学生资料、学校内部模板或 API 密钥。
+  - type: input
+    id: subject-level
+    attributes:
+      label: 科目与年级
+      placeholder: 例如：初二科学
+    validations:
+      required: true
+  - type: dropdown
+    id: outputs
+    attributes:
+      label: 使用过的产物
+      multiple: true
+      options:
+        - 详细教案
+        - 简略教案
+        - 教学简报
+        - 教师讲稿
+        - 课堂评量
+        - 考纲对照
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: 使用体验或建议
+      description: 请说明哪些部分有帮助，以及最希望改进什么。
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我确认没有提交受版权保护的教材、学生资料、学校内部文件或 API 密钥。
+          required: true

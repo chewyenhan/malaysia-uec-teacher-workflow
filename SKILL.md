@@ -4,7 +4,7 @@ description: Create source-grounded lesson plans, concise school-template spread
 metadata:
   short-description: 马来西亚独中跨科教案、简略教案、简报与评量工作流
   author: "Chew Yen Han（朱彦翰）"
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Malaysia UEC Teacher Workflow
