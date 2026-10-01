@@ -1,4 +1,4 @@
-profile_version: 1
+profile_version: 2
 
 teacher:
   display_name: ""
@@ -6,14 +6,16 @@ teacher:
   preferred_language: "zh-Hans"
 
 teaching:
-  curriculum: "Dong Zong / UEC"
+  curriculum_route: ""          # uec / custom；未填写则依据本课请求确定
+  curriculum: ""                # 实际课程体系名称，不以学校身份推断
+  custom_standards: ""          # 文件／公开网址；也可“仅依据教材与教学目标”
   default_subject: ""
   default_level: ""
   default_period_minutes: null
   week_label_format: ""
   syllabus_cache:
     directory: ""
-    sync_on_first_use: "ask"
+    sync_on_first_use: "ask"     # 仅 uec 路线适用
     last_complete_sync: ""
 
 outputs:
@@ -24,8 +26,9 @@ outputs:
     template_path: ""
   slides:
     enabled_by_default: false
-    preferred_route: "auto"
+    preferred_route: "auto"     # auto / editable / notebooklm / outline-only
     preferred_style: ""
+  record_task_state: true       # 多产物或需恢复时
 
 privacy:
   allow_upload_to_third_party_services: false

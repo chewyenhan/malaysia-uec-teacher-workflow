@@ -1,7 +1,6 @@
 interface:
-  display_name: "Malaysia UEC Teacher Workflow"
-  short_description: "独中跨科教案、简略教案、简报与评量工作流"
-  default_prompt: "Use $malaysia-uec-teacher-workflow to turn my lesson materials into a source-grounded lesson plan and the teaching outputs I request."
+  display_name: "教师备课工作流｜独中统考适配 · 自定义课程"
+  short_description: "依据教材生成配套教案、课件与讲稿，支持独中统考适配和自定义课程"
+  default_prompt: "使用 $malaysia-uec-teacher-workflow，根据我提供的教材和课程要求，生成彼此一致的教案与所需教学材料，并核对实际交付结果。"
 policy:
   allow_implicit_invocation: true
-

@@ -1,115 +1,131 @@
-# 马来西亚独中教师 AI 教学工作流
-
-## Malaysia UEC Teacher Workflow
+# 教师备课工作流
+### 独中统考适配 · 自定义课程
 
 [![Status](https://img.shields.io/badge/status-public%20beta-f59e0b)](#项目状态)
-[![Docs](https://img.shields.io/badge/docs-中文%20%7C%20English-2563eb)](#english-summary)
+[![Version](https://img.shields.io/badge/version-0.2.0-2563eb)](#本次更新)
 [![License](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-16a34a)](LICENSE.md)
 
-一个面向马来西亚华文独中教师的跨科 AI Skill。教师提供自己合法持有的课文、讲义与校本模板，AI 负责完整读取材料，并生成详细教案、简略教案、教学简报、教师讲稿与课堂评量。
+**提供课文与教学要求，得到彼此配套的教案、课件、讲稿和评量。**
 
-适用于初中、高中及不同科目，不绑定某所学校、不内置受版权保护的董总教材，也不强制使用某一家 AI、PPT 或生图工具。
+面向教师的跨科 AI Agent Skill，含马来西亚独中／UEC 统考适配，也支持按教师指定的教材、课程标准、课时与模板走自定义路线。先做好一堂课，再依据实际检查交付；不固定学校、年级、课时或课件工具。
 
-> 本项目由 **Chew Yen Han（朱彦翰）** 独立开发，并非董总官方项目，与董总不存在隶属、授权或代言关系。
+> 由 **Chew Yen Han（朱彦翰）** 独立开发。非董总官方项目，不内置董总课本或私人学校模板。
 
-## 为什么做这个项目
+| 你提供 | 工作流处理 | 你得到 |
+|---|---|---|
+| 课文、表格、图片、公式、练习 | 完整读取，核对范围与来源 | 内容清单与课程依据记录 |
+| 学生程度、目标与课时 | 对齐目标、活动、评量、补教 | 详细教案与课堂任务 |
+| 学校 Excel／Word 模板（需要时） | 识别位置，保留结构与其他内容 | 简略教案副本 |
+| 课件偏好 | 大纲、逐页讲稿、实际课件检查 | 配套材料及验收记录 |
 
-一般 AI 很容易漏读教材里的表格、图片、图表、公式、史料框或练习，也容易写出“目标很好看，但课堂无法判断学生有没有学会”的教案。本 workflow 把几个关键动作固定下来：
+## 从哪条路线开始
 
-- 完整盘点教材，而非只读取正文段落；
-- 依据教师提供的课文，不擅自补写教材内容；
-- 对齐目标、学生活动、评量证据、达标标准与补教；
-- 适配教师自己的简略教案 Excel/Word 模板；
-- 根据当前 AI 能力选择原生简报、NotebookLM 或其他路线；
-- 对照董总/统考官方公开考纲，同时保留来源与版本信息。
+**课程路线与课件路线分别选择：**
 
-## 可以生成什么
+| 课程路线 | 适用情况 | 依据 |
+|---|---|---|
+| 独中／统考适配 `uec` | 教授统考内容的独中或补习教师 | 官方公开考纲＋教师材料 |
+| 自定义课程 `custom` | 其他课程，或独中老师的非统考课程 | 教师指定标准／目标＋教材 |
 
-- 详细教案（Markdown、Word 或教师指定格式）
-- 校本简略教案（Excel/Word 模板适配）
-- 教学简报大纲、PPTX 与教师讲稿
-- 诊断性、形成性及总结性评量
-- 补教、延伸与差异化任务
-- 教材内容清单及考纲对照记录
+没有外部考纲时可以先依据教材备课，会明确标注“未核对外部考纲”。自定义路线不自动下载或套用统考考纲，也不声称已认证任何国家课程。
 
-## 不包含什么
+两种课程都能选可编辑课件、NotebookLM，或只做大纲与讲稿。
 
-- 董总课本、教师手册、扫描页或题库
-- 未经授权复制的教材图片、地图或表格
-- 某位教师的私人讲义、学校 Excel、班级资料或本机路径
-- 固定 35/40/45 分钟、固定周次或固定 PPT 风格
-- 强制依赖特定 AI 模型、图片生成器或 MCP
+## 安装：交给你的 AI Agent
 
-## 安装
+复制下列请求给能读取文件、安装 Skill 并执行必要工具的 AI Agent：
 
-推荐从 [最新 Release](https://github.com/chewyenhan/malaysia-uec-teacher-workflow/releases/latest) 下载完整 ZIP；Release 附件的下载次数可供项目维护者统计。也可以使用 Git clone：
+```text
+请读取 https://github.com/chewyenhan/malaysia-uec-teacher-workflow
+的 README.md 和 SKILL.md，检查我的环境是否已安装这个工作流。
+如未安装，请按当前 Agent 的技能安装方式安装整个工作流及其参考文件，
+保留已有配置。先告诉我需要哪些工具；只安装本次任务实际需要的依赖。
+不要上传材料或安装 NotebookLM，除非我选择这条路线。
+```
 
-下载或 clone 本仓库，把整个 `malaysia-uec-teacher-workflow` 文件夹放入你的 AI 助手所使用的 skills 目录。不同工具的目录位置不同，请以该工具当前版本的官方说明为准。
+安装后，AI 会收齐本课真正需要的参数。普通聊天窗口未必支持安装或运行 Skill；需要兼容的 Agent 环境。首次 Google 登录仍由教师完成。
+
+也可下载 [最新 Release](https://github.com/chewyenhan/malaysia-uec-teacher-workflow/releases/latest) 的完整 ZIP，或使用：
 
 ```bash
 git clone https://github.com/chewyenhan/malaysia-uec-teacher-workflow.git
 ```
 
-也可以保留为独立仓库，再从 AI 助手的 skills 目录建立链接。不要只复制 `SKILL.md`；`references/` 和 `scripts/` 也是工作流的一部分。
+把完整文件夹安装或链接到当前 Agent 的技能目录，位置以该工具的当前说明为准。只复制 SKILL.md 会漏掉参考文件与检查工具。仓库、文件夹及调用名称继续使用 `malaysia-uec-teacher-workflow`，兼容原有安装；老师看到的新标题清楚说明两种课程路线。
 
 ## 第一次使用
 
-教师只需提供本次需要的资料。一个典型请求：
+**独中／统考适配**
 
 ```text
 使用 $malaysia-uec-teacher-workflow。
-我是初二科学老师，一节课 40 分钟。
-请根据我附上的课文和学校 Excel 模板，生成详细教案、简略教案和教学 PPT。
-PPT 希望可编辑；课文中的实验表格和安全提醒都要读取。
+我教初二历史，一节课40分钟。根据附上的课文备课并核对统考考纲。
+需要详细教案、学校Excel模板的简略教案、大纲和讲稿。
+PPT 选 NotebookLM，风格写实。先列出准备上传的材料。
 ```
 
-第一次使用时，AI 会询问必要的默认设置，例如学校课时、常用输出格式和输出目录。示例见 [`teacher-profile.example.yml`](teacher-profile.example.yml)。配置不是强制；没有配置也能按单次请求工作。
-
-## 统考考纲同步
-
-仓库不重新分发董总文件，只保存官方入口。需要时可把官方公开考纲同步到本机缓存：
-
-```bash
-python scripts/sync_uec_syllabi.py --level all
-```
-
-只查看即将下载的文件：
-
-```bash
-python scripts/sync_uec_syllabi.py --level all --list-only
-```
-
-脚本只接受董总官方域名及官方域名内的重定向，并为下载文件记录来源网址、时间与 SHA-256。当前完整性基线为初中 8 科、高中 25 科；任何入口、科目页或文件失败都会标记为不完整并返回错误。网页结构若改变，脚本会停止并请使用者直接查看官方入口，不会改从非官方网站下载。
-
-## 简报路线
-
-本 skill 不假定“某种 PPT 做法永远最好”。AI 应先比较当前可用能力：
-
-1. 原生简报/生图工具：适合高质量、可编辑或需要定制视觉的成品；
-2. NotebookLM：适合快速制作以教师来源为依据的简报；
-3. 仅生成大纲与讲稿：当环境暂时没有可靠的简报工具时使用。
-
-NotebookLM 是可选项。若使用者的 AI 没有相应接口，AI 应说明情况，并在取得同意后协助配置兼容的连接方式；不得静默下载安装第三方工具。
-
-## 项目结构
+**自定义课程**
 
 ```text
-malaysia-uec-teacher-workflow/
-├── SKILL.md
-├── agents/openai.yaml
-├── references/
-├── scripts/
-├── tests/
-├── evals/evals.json
-├── teacher-profile.example.yml
-├── LICENSE.md
-├── NOTICE.md
-└── CONTRIBUTING.md
+使用 $malaysia-uec-teacher-workflow，自定义课程路线。
+我教五年级数学，一节30分钟，主题是同分母分数加法。
+按附上的材料和教学目标设计，不对照统考。
+要详细教案、可编辑课件、大纲、讲稿与课末练习。
 ```
+
+每次可以只要其中几项。已有的课时、路线和风格不会重复询问；学校名称和班级人数等不必要资料可以不填。希望保存默认设置时参考 [教师配置示例](teacher-profile.example.yml)。
+
+先想看成果再安装？看这个完全原创的 [自定义数学案例](examples/custom-fractions/README.md)：材料、教案、大纲、讲稿、记录齐全，没有使用版权课文、私人模板或学生资料。
+
+## NotebookLM：可选配套，完整流程
+
+配套项目为 **[notebooklm-py](https://github.com/teng-lin/notebooklm-py)**，提供程序与 Agent Skill。本工作流链接其安装说明，不要求重复安装，也不强制常驻 MCP。
+
+```text
+检查已有工具 → 缺少时配置配套程序与 Skill → 教师 Google 登录
+    → 准备四份资料 → 列明上传范围 → 上传并确认来源就绪
+    → 生成并保存任务 ID → 下载 → 逐页核对与修正 → 交付
+```
+
+四份来源是 **教材、教案、大纲、讲稿**；材料清单不能代替教材。详细指引与恢复方法在 [NotebookLM 工作流](references/notebooklm-workflow.md)。
+
+这个配套是非 Google 官方工具，接口可能变化。已有可用浏览器或连接方式就复用；接口失效时保留本地材料，并提供手动网站路线。PPTX 不自动等于文字可编辑，工作流会说明实际情况。
+
+## 可检查，也能接着做
+
+- 每页用同一编号连接大纲、讲稿和实际课件。
+- 用本课任务记录保存进度；登录失效或远程生成未结束，不从头再做。
+- 问题页单独修正，记录依据并复查关联文件。
+- 保存“通过多少项、修正哪里、哪些仍待核”的验收记录。
+
+离线结构检查不会联网、上传或更改材料：
+
+```bash
+python scripts/check_lesson_bundle.py path/to/lesson-folder
+```
+
+它检查四份来源、页面对应和已有课件格式，**不代替内容与画面检查**。详见 [验收与继续执行](references/quality-and-resume.md)。
+
+## 独中适配：统考考纲
+
+先查已有官方缓存。需要同步时按级别运行：
+
+```bash
+python scripts/sync_uec_syllabi.py --level junior
+python scripts/sync_uec_syllabi.py --level senior
+```
+
+完整同步可选 `--level all`；查看下载清单加 `--list-only`。脚本只接受董总官方域名，记录来源、时间与 SHA-256，部分失败会报不完整。下载后仍须定位本课内容和版本；不编造编号、题型比例或“高频考点”。
+
+## 本次更新
+
+v0.2.0 将已有教学核心扩展为两种课程入口，补齐 NotebookLM 配套来源与执行步骤，新增可恢复任务记录、逐页对应和离线资料包检查。原有模板适配、教材审计与官方考纲同步保留。
 
 ## 项目状态
 
-目前核心版本免费公开，方便独中教师试用、检验不同科目与校本格式并提供意见。已经发布的版本继续受当时许可证约束；未来的新组件或服务可能采用不同授权，并可能提供收费培训、安装配置、校本模板定制、批量工具及技术支持。
+**公开 beta。** 新版自定义数学示例与本地检查已验证；不能把这些结果当成所有学科、国家课程或第三方服务均已端到端验证。NotebookLM 的真实账户生成受账号、额度、接口和教师上传授权影响，首次使用应以自己的小课题试跑。
+
+核心版本免费公开。已发布版本的许可证保持有效；商业授权、培训与校本定制仍依以下授权说明办理。
 
 ## 版权与教材边界
 
@@ -122,7 +138,7 @@ malaysia-uec-teacher-workflow/
 
 ## 授权方式
 
-- `SKILL.md`、README、`references/`、示例配置与评测内容：**CC BY-NC-SA 4.0**
+- `SKILL.md`、README、`references/`、`examples/`、示例配置与评测内容：**CC BY-NC-SA 4.0**
 - `scripts/` 与 `tests/`：**MIT License**
 - 教师自行上传的课文、模板及生成成果：不因使用本仓库而自动改变原有权属
 
@@ -139,12 +155,13 @@ malaysia-uec-teacher-workflow/
 
 ## 参与改进
 
-欢迎不同科目的独中老师提交使用案例、问题与改进建议。请勿在 Issue、Pull Request 或测试资料中上传课本扫描页、学生个人资料、学校内部文件或 API 密钥。详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+欢迎不同课程、不同科目的老师提交使用案例、问题与改进建议。请勿在 Issue、Pull Request 或测试资料中上传课本扫描页、学生个人资料、学校内部文件或 API 密钥。详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 
 ## English summary
 
-**Malaysia UEC Teacher Workflow** is an unofficial, cross-subject AI skill for teachers in Malaysian Chinese Independent Schools. Teachers provide lesson materials they are legally entitled to use; the AI inventories all content—including tables, figures, formulas and exercises—then produces aligned lesson plans, school-template spreadsheets, slides and assessments.
+**Teacher Lesson Workflow**, with Malaysian UEC adaptation and a custom-curriculum route, is a source-grounded AI Agent skill. Teachers provide materials, lesson duration, requested outputs and, where relevant, curriculum standards or school templates.
 
-The repository does not bundle Dong Zong textbooks or private school materials. It supports junior and senior levels, adapts to each school's timetable and templates, and selects presentation tools according to the user's needs and the AI environment's actual capabilities.
+The shared teaching core produces aligned lesson plans, concise school-template plans, slide outlines, teacher notes and assessments. UEC alignment and custom curricula are separate from the choice of editable slides, NotebookLM or outline-only outputs. NotebookLM automation is an optional dependency with explicit setup, source preparation, authentication and QA instructions. Local bundle checks validate structure, not pedagogical quality or live-service availability.
 
-Search terms: 马来西亚独中、华文独中、董总、统考、教案、简略教案、教学简报、UEC、Dong Zong、Chinese Independent School、lesson plan、teacher workflow、AI skill.
+The existing repository and invocation identifier remain `malaysia-uec-teacher-workflow`. No textbooks, school records or login credentials are bundled.

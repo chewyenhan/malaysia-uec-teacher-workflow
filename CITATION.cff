@@ -1,12 +1,12 @@
 cff-version: 1.2.0
 message: "If this workflow helps your teaching or research, please cite it as follows."
-title: "Malaysia UEC Teacher Workflow"
+title: "Teacher Lesson Workflow with UEC Adaptation and Custom Curricula"
 type: software
 authors:
   - family-names: "Chew"
     given-names: "Yen Han"
-version: "0.1.1"
-date-released: "2026-09-11"
+version: "0.2.0"
+date-released: "2026-10-01"
 license:
   - "CC-BY-NC-SA-4.0"
   - "MIT"

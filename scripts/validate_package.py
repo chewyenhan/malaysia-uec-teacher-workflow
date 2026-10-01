@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,17 +39,33 @@ JUNK_DIRECTORY_NAMES = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_ca
 MAX_REPOSITORY_FILE_BYTES = 5 * 1024 * 1024
 
 
+def package_files(root: Path) -> list[Path]:
+    """Check distributable files, including new and tracked ignored files.
+
+    Source archives have no Git metadata, so every supplied file is checked.
+    Checkouts exclude local ignored outputs but never hide tracked caches.
+    """
+    if (root / ".git").exists():
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=root, capture_output=True, check=True,
+        )
+        names = result.stdout.decode("utf-8").split("\0")
+        return sorted({root / name for name in names if name and (root / name).is_file()})
+    return sorted(path for path in root.rglob("*") if path.is_file() and ".git" not in path.parts)
+
+
 def main() -> int:
     errors: list[str] = []
+    try:
+        all_files = package_files(ROOT)
+    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError) as error:
+        print(f"FAIL: cannot determine package file list ({type(error).__name__})")
+        return 1
+    included = {path.relative_to(ROOT).as_posix() for path in all_files}
     for relative in sorted(REQUIRED):
-        if not (ROOT / relative).is_file():
+        if relative not in included:
             errors.append(f"missing required file: {relative}")
-
-    all_files = [
-        path for path in ROOT.rglob("*")
-        if path.is_file()
-        and ".git" not in path.parts
-    ]
     text_files = [
         path for path in all_files
         if path.resolve() != Path(__file__).resolve()
@@ -67,12 +84,14 @@ def main() -> int:
         if path.stat().st_size > MAX_REPOSITORY_FILE_BYTES:
             errors.append(f"{path.relative_to(ROOT)} exceeds the 5 MiB repository limit")
 
-    junk_directories = sorted(
-        path.relative_to(ROOT) for path in ROOT.rglob("*")
-        if path.is_dir() and ".git" not in path.parts and path.name in JUNK_DIRECTORY_NAMES
-    )
+    junk_directories = sorted({
+        Path(*path.relative_to(ROOT).parts[:index + 1])
+        for path in all_files
+        for index, part in enumerate(path.relative_to(ROOT).parts[:-1])
+        if part in JUNK_DIRECTORY_NAMES
+    })
     if junk_directories:
-        errors.append("junk directories remain: " + ", ".join(map(str, junk_directories)))
+        errors.append("junk directories in package: " + ", ".join(map(str, junk_directories)))
 
     skill = (ROOT / "SKILL.md").read_text(encoding="utf-8") if (ROOT / "SKILL.md").exists() else ""
     if "name: malaysia-uec-teacher-workflow" not in skill:

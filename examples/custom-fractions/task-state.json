@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "curriculum_route": "custom",
+  "slide_route": "outline-only",
+  "sources": {
+    "material": "source-material.txt",
+    "lesson_plan": "detailed-lesson-plan.md",
+    "outline": "slides-outline.md",
+    "teacher_notes": "teacher-notes.md"
+  },
+  "page_ids": [
+    "P01",
+    "P02",
+    "P03",
+    "P04"
+  ],
+  "steps": {
+    "materials": "complete",
+    "lesson_plan": "complete",
+    "outline": "complete",
+    "teacher_notes": "complete",
+    "qa": "complete"
+  },
+  "outputs": {},
+  "next_action": "本次教案、大纲与讲稿已完成；需要真实课件时由教师选择制作路线"
+}

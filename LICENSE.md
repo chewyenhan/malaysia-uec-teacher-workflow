@@ -6,7 +6,7 @@ This repository uses two licenses. The path table below is authoritative for rep
 
 | Paths | License |
 |---|---|
-| `SKILL.md`, `README.md`, `NOTICE.md`, `CONTRIBUTING.md`, `CITATION.cff`, `agents/`, `references/`, `evals/`, `.github/`, and example configuration files | CC BY-NC-SA 4.0 |
+| `SKILL.md`, `README.md`, `NOTICE.md`, `CONTRIBUTING.md`, `CITATION.cff`, `CHANGELOG.md`, `agents/`, `references/`, `evals/`, `examples/`, `.github/`, and example configuration files | CC BY-NC-SA 4.0 |
 | `scripts/` and `tests/` | MIT License |
 | `.gitignore` and purely mechanical metadata | No copyright claim |
 
