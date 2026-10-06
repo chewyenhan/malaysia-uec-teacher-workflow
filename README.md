@@ -81,7 +81,22 @@ PPT 选 NotebookLM，风格写实。先列出准备上传的材料。
 
 ## NotebookLM：可选配套，完整流程
 
-配套项目为 **[notebooklm-py](https://github.com/teng-lin/notebooklm-py)**，本路线明确使用它提供的 NotebookLM MCP。常见本地 stdio 配置如下；不同 Agent 的配置文件位置和重载步骤按各自 MCP 文档处理：
+配套项目为 **[notebooklm-py](https://github.com/teng-lin/notebooklm-py)**，本路线优先使用它提供的 NotebookLM MCP。新用户没有 MCP 时，Skill 会先检查你的 Agent 与运行位置，再引导一次性安装、Google 登录、连接和实际测试，不要求你自己猜配置文件：
+
+```bash
+uv tool install "notebooklm-py[browser,mcp]"
+notebooklm login
+notebooklm auth check --test --json
+notebooklm mcp install claude-desktop  # 按实际客户端选择受支持的安装名称
+```
+
+自动配置器当前支持 Claude Desktop、Claude Code、Cursor、Windsurf；只执行与你的客户端相符的一条命令：`notebooklm mcp install claude-desktop`、`notebooklm mcp install claude-code`、`notebooklm mcp install cursor` 或 `notebooklm mcp install windsurf`。其他 MCP 客户端按其官方说明添加本机 stdio server。安装配置后重启 Agent 并确认 NotebookLM 工具实际可用。若 Agent 不支持 MCP、但能在你的电脑运行本机命令，Skill 会使用同一上游项目的 CLI 完成登录、生成、状态查询和 PPTX 下载，并明确说明这是 CLI 备用路线。
+
+**下载到电脑的条件：**本机 Agent + 本机 stdio MCP 可将 PPTX 下载到指定绝对路径；本机 CLI 也可保存到运行命令的电脑。云端 MCP 只提供下载链接，由你打开后保存到电脑；Skill 不会把云端目录说成本机文件。
+
+上游文档确认 slide deck 可选择 PPTX 输出。实际交付前仍要核对下载位置、文件结构和页面，不能以安装成功或任务提交成功冒充成品。完整首次接入、四份来源、上传确认、生成、下载与恢复步骤见 [NotebookLM 工作流](references/notebooklm-workflow.md)。
+
+常见本地 stdio 配置如下；不同 Agent 的配置文件位置和重载步骤按各自 MCP 文档处理：
 
 ```json
 {
@@ -94,7 +109,7 @@ PPT 选 NotebookLM，风格写实。先列出准备上传的材料。
 }
 ```
 
-先检查现有 MCP，避免重复添加。初次使用需按配套说明登录并验证实时连接；教师自行完成 Google 登录。MCP 连接后，工作流先准备教材、教案、大纲、讲稿四份来源，逐一列出上传范围，取得本课上传确认后才上传、生成和检查成品。`notebooklm-py` 为非 Google 官方社区项目，其 MCP 文档标注为实验性，接口可能变化；参阅[安装说明](https://github.com/teng-lin/notebooklm-py/blob/main/docs/installation.md)和[MCP 指南](https://github.com/teng-lin/notebooklm-py/blob/main/docs/mcp-guide.md)。
+先检查现有 MCP，避免重复添加。教师自行完成 Google 登录。MCP 连接后，工作流先准备教材、教案、大纲、讲稿四份来源，逐一列出上传范围，取得本课上传确认后才上传、生成和检查成品。`notebooklm-py` 为非 Google 官方社区项目，其 MCP 文档标注为实验性，接口可能变化；参阅[安装说明](https://github.com/teng-lin/notebooklm-py/blob/main/docs/installation.md)和[MCP 指南](https://github.com/teng-lin/notebooklm-py/blob/main/docs/mcp-guide.md)。
 
 ```text
 检查已有工具 → 缺少时配置配套程序与 Skill → 教师 Google 登录
@@ -134,7 +149,7 @@ python scripts/sync_uec_syllabi.py --level senior
 
 ## 本次更新
 
-v0.3.0 加入自定义课程首次设置与可复用默认值；把 NotebookLM MCP 和 AI 生图整页课件设为必须介绍的两种视觉方案，补齐跨 Agent 生图步骤与图片式 PPTX 验收，并让离线检查器识别该路线。`editable` 仍用于明确需要可编辑文字的课件。此前 v0.2.1 加强默认四项交付、完整教学模板和最终完整性检查；v0.2.0 扩展两种课程入口并补齐 NotebookLM、恢复记录和离线检查。
+v0.3.1 明确跨科教案与个人初中历史教案的教学闭环对齐、适用边界，并补齐 NotebookLM 无 MCP 首次接入、CLI 备用、本机 PPTX 保存与云端下载说明。v0.3.0 加入自定义课程首次设置与可复用默认值；把 NotebookLM MCP 和 AI 生图整页课件设为必须介绍的两种视觉方案，补齐跨 Agent 生图步骤与图片式 PPTX 验收，并让离线检查器识别该路线。`editable` 仍用于明确需要可编辑文字的课件。此前 v0.2.1 加强默认四项交付、完整教学模板和最终完整性检查；v0.2.0 扩展两种课程入口并补齐 NotebookLM、恢复记录和离线检查。
 
 ## 项目状态
 
@@ -177,7 +192,7 @@ v0.3.0 加入自定义课程首次设置与可复用默认值；把 NotebookLM M
 
 **Teacher Lesson Workflow**, with Malaysian UEC adaptation and a custom-curriculum route, is a source-grounded AI Agent skill. Teachers provide materials, lesson duration, requested outputs and, where relevant, curriculum standards or school templates.
 
-The shared teaching core produces aligned lesson plans, concise school-template plans, slide outlines, teacher notes and assessments. First-time custom-curriculum users can establish reusable course defaults. PPT options include NotebookLM MCP and image-generated full-slide PPTX; editable text slides remain available when required. The local checker validates package structure, not pedagogical quality or live-service availability.
+The shared teaching core produces aligned lesson plans, concise school-template plans, slide outlines, teacher notes and assessments. First-time custom-curriculum users can establish reusable course defaults. PPT options include NotebookLM MCP (with guided first-time setup and a local CLI fallback when MCP is unavailable) and image-generated full-slide PPTX; editable text slides remain available when required. Local stdio MCP or CLI can save a PPTX to the user's machine; a remote MCP provides a download link. The local checker validates package structure, not pedagogical quality or live-service availability.
 
 The existing repository and invocation identifier remain `malaysia-uec-teacher-workflow`. No textbooks, school records or login credentials are bundled.
 

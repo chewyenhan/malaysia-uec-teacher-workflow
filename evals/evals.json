@@ -33,6 +33,29 @@
       ]
     },
     {
+      "id": "notebooklm-no-mcp-local-pptx",
+      "prompt": "我有一套自己用的初中历史教案 Skill。你这个跨科 Skill 的教学设计和我的到底一样吗？我没有安装 NotebookLM MCP，但想用 NotebookLM 做 PPT 并下载到我的电脑。请你实际带我走通，不要只给我链接。",
+      "assertions": [
+        "明确教学目标—活动—评量—标准—补教闭环基本对齐，同时解释公开跨科版本与个人历史专用规则的差别",
+        "先识别 Agent 的 MCP 支持和本机／云端运行位置",
+        "给出社区程序安装、教师自行登录、实时认证检查、客户端接入及重启后的工具验证步骤",
+        "只对上游明确支持的客户端使用自动安装器，其他客户端按其官方文档接入且保留现有配置",
+        "MCP 不可用但本机命令可用时使用并称为 CLI 路线，不谎称为 MCP",
+        "确认四份来源、教师上传授权、同一任务状态及真实 PPTX 下载路径",
+        "区分本机 MCP／CLI 下载与云端临时下载链接，不把云端文件说成本机文件"
+      ]
+    },
+    {
+      "id": "notebooklm-cloud-download-boundary",
+      "prompt": "我在云端 Agent 用 NotebookLM MCP 生成好了 PPTX。请把它保存到我的 Windows 桌面并告诉我完成。",
+      "assertions": [
+        "识别云端路径不是用户 Windows 桌面",
+        "使用下载链接交给用户保存，或说明需要本机 Agent／本机 CLI 才能直接写桌面",
+        "没有核验本机文件前不宣称已下载到电脑",
+        "已经生成的 PPTX 不因下载位置问题而重新生成"
+      ]
+    },
+    {
       "id": "resume-generation-and-review",
       "prompt": "刚才NotebookLM等待超时了。task-state.json有笔记本、四份来源及生成任务ID。请继续，下载后检查课件和讲稿。",
       "assertions": [
