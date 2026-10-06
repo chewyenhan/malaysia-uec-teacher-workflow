@@ -5,8 +5,8 @@ type: software
 authors:
   - family-names: "Chew"
     given-names: "Yen Han"
-version: "0.2.0"
-date-released: "2026-10-01"
+version: "0.2.1"
+date-released: "2026-10-06"
 license:
   - "CC-BY-NC-SA-4.0"
   - "MIT"

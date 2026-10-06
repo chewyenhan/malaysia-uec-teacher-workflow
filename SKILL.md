@@ -4,7 +4,7 @@ description: Create source-grounded lesson plans, school-template concise plans,
 metadata:
   short-description: 教师备课工作流，含独中统考适配与自定义课程
   author: "Chew Yen Han（朱彦翰）"
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # 教师备课工作流｜独中统考适配 · 自定义课程
@@ -12,6 +12,19 @@ metadata:
 从同一份教学材料，生成彼此一致的教案、校本简略教案、教学简报、教师讲稿和评量。先确认课程体系，再选择课件工具；不以教师任职学校代替课程判断。
 
 独立开发、非官方项目，与董总不存在隶属、授权或代言关系。
+
+## 默认执行契约：完整备课，不只制作 PPT
+
+教师调用本 Skill 备课、未明确限定产物时，默认交付 **详细教案、逐页教师讲稿、PPT 大纲和真实 PPTX** 四项。使用说明是附加说明，不能代替教案或讲稿。只有教师明确说“只要 PPT／只要教案／只要大纲”等，才缩小范围；记录其明确选择，不把未列出所有文件理解为不需要。
+
+开始制作前，一次确认缺失的关键资料：课程体系（统考或自定义）、科目／年级、教材范围、课时，以及 PPT 路线和视觉风格。已有明确答案直接沿用。
+
+- **统考路线**：确认初中／高中、科目和考纲年份／版本，询问是否有考纲文件；教师没有时先按 syllabus-alignment.md 查官方公开考纲。能核实则记录版本和来源，不能核实则明确“未核对统考考纲”及待核项，不能虚构已完成核对。
+- **自定义路线**：询问教师自己的课程标准／教学目标，不强制套用统考考纲；获知没有外部标准时，基于教材并明确说明依据。
+- **PPT 路线**：让教师在 NotebookLM 来源驱动生成与 AI Agent 直接生成真实 PPTX（editable）之间选择，并确认风格。两条路线都必须先完成教案、大纲和逐页讲稿。
+- **outline-only** 只在教师明确选择时作为交付范围。工具失败不能静默把完整任务改成此路线：保留四项任务，交付已完成文件，PPTX 标记为受阻并记录继续步骤；安装教程或提示词不能算已生成 PPTX。
+
+完整任务必须读取 first-run.md、syllabus-alignment.md、lesson-design.md、slides-routing.md 和 quality-and-resume.md；选择 NotebookLM 还必须读取 notebooklm-workflow.md；选择 editable 必须读取 agent-pptx-workflow.md。执行顺序为教材盘点 → 考纲／课程依据核证 → 完整教案 → 逐页大纲 → 逐页讲稿 → 选定路线制作 PPTX → 成品核对。最终回复逐一给出四项文件链接和状态，缺任何一项不得宣称整套完成。
 
 ## 两个独立选择
 
@@ -33,6 +46,7 @@ metadata:
 - 详细教案、评量、补教及跨科活动：[lesson-design.md](references/lesson-design.md)。
 - 校本 Excel／Word 简略教案：[spreadsheet-adaptation.md](references/spreadsheet-adaptation.md)。
 - 选课件工具、每页大纲与讲稿：[slides-routing.md](references/slides-routing.md)。
+- **选择 AI Agent 直接生成 PPTX 时**，读 [agent-pptx-workflow.md](references/agent-pptx-workflow.md)：逐页规格、样张、真实文本框、批量制作、渲染和验收。
 - **选择 NotebookLM 时**，读 [notebooklm-workflow.md](references/notebooklm-workflow.md)：GitHub 配套工具、安装、登录、四份来源、生成、下载与恢复。
 - 多产物、长任务、中断恢复或最终交付：[quality-and-resume.md](references/quality-and-resume.md)。
 - 教材权利、上传范围或公开分享：[copyright-and-privacy.md](references/copyright-and-privacy.md)。
@@ -43,7 +57,7 @@ metadata:
 2. **完整盘点材料。** 按原顺序记录正文、表格、图像及图注、地图／图表、公式、资料框、例题和练习；没有的类别写“未发现”。核实章节边界，不替教师搜集未提供的版权教材。
 3. **核对课程依据。** `uec` 路线先检查官方缓存，缺失时按考纲参考文件查找；`custom` 路线核对教师指定标准。编号、比例和“高频”均须有依据；无法核实时继续基于教材设计，集中列出待核项目。
 4. **先完成教学设计。** 每个目标对应学生活动、评量证据、达标标准、即时补教和延伸。时间合计须符合本课；不给所有学科硬套历史活动或固定 Bloom 层级。
-5. **派生本次产物。** 从同一组目标与来源生成简略教案、大纲、逐页讲稿、课件和练习。页面采用稳定编号 `P01`、`P02` 等，修订后同步对应讲稿。先做代表页检查再批量制作；只交付用户要求的范围。
+5. **派生本次产物。** 从同一组目标与来源生成简略教案、大纲、逐页讲稿、课件和练习。页面采用稳定编号 `P01`、`P02` 等，修订后同步对应讲稿。先做代表页检查再批量制作；默认交付完整四项；仅在教师明确缩小范围时按其选择交付。
 6. **检查与修正。** 打开或渲染真实成品，核对文字、事实、公式、版面、页序及模板保护；发现问题修正相应文件并复查关联产物。保存具体结果，不能凭文件存在判定内容正确。
 
 ## 可靠交付
@@ -74,3 +88,9 @@ lesson-output/{subject}-{grade}-{topic}/
 ```
 
 教师自己的文件命名可以沿用，在任务记录中映射即可。NotebookLM 的课文来源必须是实际教材／教师认可的完整转录，内容清单不能替代课文。
+
+完整四项交付使用 `--require-complete` 最终检查；普通结构检查仅证明准备状态。最终结果必须包含四项成品、风格、实际页数、内容／画面检查计数和待核项。
+
+生成后和后续修改时必须执行 [PPT同步关卡](references/ppt-synchronization.md)，保存逐页映射及四份成品摘要；最终验收不得跳过。
+
+选择风格和制作前必须读取 [完整PPT风格库](references/slide-style-library.md)；将所选风格落实到每页构图、配色和文字布局，并以样张检查全片一致性。

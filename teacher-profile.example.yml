@@ -25,7 +25,7 @@ outputs:
     enabled_by_default: false
     template_path: ""
   slides:
-    enabled_by_default: false
+    enabled_by_default: true
     preferred_route: "auto"     # auto / editable / notebooklm / outline-only
     preferred_style: ""
   record_task_state: true       # 多产物或需恢复时

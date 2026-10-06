@@ -7,6 +7,7 @@ Content and visual QA remain separate teacher/agent checks.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -60,7 +61,7 @@ def pptx_page_count(path: Path) -> int:
         return len(slides)
 
 
-def validate_bundle(folder: Path, manifest_name: str = "task-state.json") -> dict:
+def validate_bundle(folder: Path, manifest_name: str = "task-state.json", require_complete: bool = False) -> dict:
     checks: list[dict] = []
     warnings: list[str] = []
 
@@ -97,7 +98,8 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json") -> dic
     if not isinstance(sources, dict):
         return finish()
 
-    required = ("material", "lesson_plan", "outline", "teacher_notes") if route == "notebooklm" else ()
+    required = (("material", "lesson_plan", "outline", "teacher_notes") if route == "notebooklm"
+                else ("lesson_plan", "outline", "teacher_notes") if route == "editable" else ())
     paths: dict[str, Path] = {}
     for role in required:
         check(f"source role {role} is mapped", isinstance(sources.get(role), str) and bool(sources[role].strip()))
@@ -166,6 +168,49 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json") -> dic
             check("completed slide step has an actual output", False)
         elif route in {"editable", "notebooklm"}:
             warnings.append("Slides have not been supplied; this is not a completed slide-deck check.")
+    if require_complete:
+        check("complete bundle uses a PPTX generation route", route in {"editable", "notebooklm"})
+        for role in ("lesson_plan", "outline", "teacher_notes"):
+            check(f"complete bundle includes {role}", role in paths)
+        slide_file = outputs.get("slides") if isinstance(outputs, dict) else None
+        check("complete bundle includes PPTX", isinstance(slide_file, str) and Path(slide_file).suffix.lower() == ".pptx")
+        for step in ("lesson_plan", "outline", "teacher_notes", "slides", "qa"):
+            check(f"complete bundle step {step} is complete", isinstance(steps, dict) and steps.get(step) == "complete")
+        qa_file = outputs.get("qa_report") if isinstance(outputs, dict) else None
+        try:
+            qa_present = isinstance(qa_file, str) and bool(qa_file) and (folder / qa_file).is_file() and (folder / qa_file).stat().st_size > 0
+        except (OSError, ValueError):
+            qa_present = False
+        check("complete bundle has a nonempty QA report", qa_present)
+        try:
+            sync_path = outputs.get("page_sync") if isinstance(outputs, dict) else None
+            sync = json.loads((folder / sync_path).read_text(encoding="utf-8-sig")) if isinstance(sync_path, str) else None
+            check("page synchronization record is an object", isinstance(sync, dict))
+            if isinstance(sync, dict):
+                pages = sync.get("pages")
+                valid_pages = isinstance(pages, list) and all(isinstance(item, dict) for item in pages)
+                check("synchronization pages are valid", valid_pages)
+                if valid_pages:
+                    check("synchronization IDs match final page order", [item.get("id") for item in pages] == declared)
+                    check("synchronization uses consecutive slide numbers", [item.get("slide_number") for item in pages] == list(range(1, len(declared)+1)))
+                    check("every page has matched content and references", all(
+                        item.get("status") == "matched" and item.get("outline_ref") == item.get("id")
+                        and item.get("notes_ref") == item.get("id")
+                        and isinstance(item.get("actual_title"), str) and bool(item["actual_title"].strip())
+                        and isinstance(item.get("lesson_plan_ref"), str) and bool(item["lesson_plan_ref"].strip())
+                        for item in pages))
+                files = sync.get("files", {})
+                for role in ("lesson_plan", "outline", "teacher_notes", "slides"):
+                    entry = files.get(role) if isinstance(files, dict) else None
+                    expected = (folder / slide_file).resolve() if role == "slides" and isinstance(slide_file, str) else paths.get(role)
+                    matches = False
+                    if isinstance(entry, dict) and expected and isinstance(entry.get("path"), str):
+                        actual_path = (folder / entry["path"]).resolve()
+                        matches = actual_path == expected and hashlib.sha256(actual_path.read_bytes()).hexdigest() == entry.get("sha256")
+                    check(f"synchronization binds current {role} file", matches)
+        except (OSError, ValueError, TypeError):
+            check("page synchronization record is readable and current", False)
+
     warnings.append("Check facts, Chinese text, formula accuracy, visual layout, and editability by opening/rendering the actual outputs.")
     return finish()
 
@@ -175,8 +220,9 @@ def main() -> int:
     parser.add_argument("folder", type=Path)
     parser.add_argument("--manifest", default="task-state.json")
     parser.add_argument("--json", action="store_true", dest="json_output")
+    parser.add_argument("--require-complete", action="store_true", help="Require all four deliverables and recorded QA for final delivery")
     args = parser.parse_args()
-    result = validate_bundle(args.folder, args.manifest)
+    result = validate_bundle(args.folder, args.manifest, args.require_complete)
     if args.json_output:
         print(json.dumps(result, ensure_ascii=True, indent=2))
     else:

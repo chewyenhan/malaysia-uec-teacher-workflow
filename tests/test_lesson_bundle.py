@@ -1,5 +1,6 @@
 """Behavior checks for incomplete sources, page drift and false PPTX files."""
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -82,6 +83,70 @@ class LessonBundleTests(unittest.TestCase):
         (self.folder / "slides.pptx").write_bytes(b"%PDF-1.7\nnot a PowerPoint file")
         self.state["outputs"]["slides"] = "slides.pptx"
         self.assertFalse(self.run_check()["ok"])
+
+    def test_editable_missing_lesson_plan_fails(self):
+        self.state["slide_route"] = "editable"
+        self.state["sources"].pop("lesson_plan")
+        self.assertFalse(self.run_check()["ok"])
+
+    def test_preflight_is_not_complete_delivery(self):
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+    def prepare_complete(self):
+        self.make_pptx()
+        self.state["steps"] = dict.fromkeys(("lesson_plan", "outline", "teacher_notes", "slides", "qa"), "complete")
+        (self.folder / "qa.md").write_text("Recorded visual review evidence.", encoding="utf-8")
+        self.state["outputs"]["qa_report"] = "qa.md"
+        sync = {"pages": [{"id": pid, "slide_number": i, "actual_title": pid, "outline_ref": pid, "notes_ref": pid, "lesson_plan_ref": "teaching activity", "status": "matched"} for i, pid in enumerate(self.state["page_ids"], 1)], "files": {}}
+        for role, filename in {**self.state["sources"], "slides": "slides.pptx"}.items():
+            if role == "material":
+                continue
+            sync["files"][role] = {"path": filename, "sha256": hashlib.sha256((self.folder / filename).read_bytes()).hexdigest()}
+        (self.folder / "sync.json").write_text(json.dumps(sync), encoding="utf-8")
+        self.state["outputs"]["page_sync"] = "sync.json"
+
+
+    def test_complete_delivery_passes_structural_checks(self):
+        self.prepare_complete()
+        self.run_check()
+        self.assertTrue(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+    def test_pdf_cannot_complete_pptx_delivery(self):
+        self.prepare_complete()
+        (self.folder / "slides.pdf").write_bytes(b"%PDF-1.7")
+        self.state["outputs"]["slides"] = "slides.pdf"
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+    def test_missing_qa_report_blocks_complete_delivery(self):
+        self.prepare_complete()
+        self.state["outputs"].pop("qa_report")
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+
+    def test_changed_notes_invalidate_sync(self):
+        self.prepare_complete()
+        with (self.folder / "notes.md").open("a", encoding="utf-8") as stream:
+            stream.write("\nChanged content.")
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+    def test_missing_page_sync_blocks_complete_delivery(self):
+        self.prepare_complete()
+        self.state["outputs"].pop("page_sync")
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
+    def test_wrong_slide_order_blocks_complete_delivery(self):
+        self.prepare_complete()
+        path = self.folder / "sync.json"
+        sync = json.loads(path.read_text())
+        sync["pages"][0]["slide_number"] = 2
+        path.write_text(json.dumps(sync))
+        self.run_check()
+        self.assertFalse(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
 
     def make_pptx(self, pages=2, missing_slide=False):
         with zipfile.ZipFile(self.folder / "slides.pptx", "w") as archive:

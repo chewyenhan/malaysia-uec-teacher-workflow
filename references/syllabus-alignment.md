@@ -6,7 +6,7 @@
 
 1. 确认初中／高中、科目、考试年份或文件版本。
 2. 优先查已有官方缓存，定位本课范围；已核实缓存可用时不重复下载。
-3. 缓存缺失／版本不明且教师要求核证时，使用 [official-sources.json](official-sources.json) 的官方入口，沿用教师对下载的授权。
+3. uec 路线默认核证；缓存缺失／版本不明时，使用 [official-sources.json](official-sources.json) 的官方入口，沿用教师对下载的授权。
 4. 需要同步时可按级别运行：
    `python scripts/sync_uec_syllabi.py --level junior` 或 `--level senior`。
    首次完整初高中同步是可选设置：`--level all`；不因一堂课强制下载所有科目。

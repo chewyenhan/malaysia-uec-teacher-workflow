@@ -1,6 +1,6 @@
 interface:
   display_name: "教师备课工作流｜独中统考适配 · 自定义课程"
   short_description: "依据教材生成配套教案、课件与讲稿，支持独中统考适配和自定义课程"
-  default_prompt: "使用 $malaysia-uec-teacher-workflow，根据我提供的教材和课程要求，生成彼此一致的教案与所需教学材料，并核对实际交付结果。"
+  default_prompt: "使用 $malaysia-uec-teacher-workflow，根据我提供的教材和课程要求，先确认课程／考纲与PPT路线、风格，默认生成完整教案、逐页教师讲稿、PPT大纲和真实PPTX，再检查四项交付；仅在我明确限定时缩减。"
 policy:
   allow_implicit_invocation: true

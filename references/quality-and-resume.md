@@ -81,3 +81,11 @@ python scripts/check_lesson_bundle.py path/to/lesson-folder --json
 5. 认证／额度／接口问题阻塞课件时，先交付已完成材料，并说明下一步；不把失败写成完成。
 
 一课目录只保留有用途的成品、工作资料和记录；原始材料与溯源版本不得自动删除。
+
+## 最终交付关卡
+
+完整四项任务交付前必须运行 `python scripts/check_lesson_bundle.py 本课目录 --require-complete --json`。普通模式用于准备阶段，允许尚未生成课件，不能用普通模式的通过宣称完整交付。
+
+最终模式要求教案、大纲、讲稿、实际PPTX、相关步骤 complete 及 outputs.qa_report 指向非空验收记录。它仍只检查结构，不能自动证明教案内容、画面或QA报告真实正确；Agent 必须另做上述实际检查。明确限定范围的任务按其约定验收，不伪造四项来通过此模式。
+
+生成后和后续修改时必须执行 [PPT同步关卡](ppt-synchronization.md)，保存逐页映射及四份成品摘要；最终验收不得跳过。
