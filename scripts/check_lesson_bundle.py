@@ -89,7 +89,7 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json", requir
     check("curriculum route is uec or custom", state.get("curriculum_route") in {"uec", "custom"}
           if isinstance(state.get("curriculum_route"), str) else False)
     route = state.get("slide_route")
-    valid_route = route in {"editable", "notebooklm", "outline-only", None} if isinstance(route, (str, type(None))) else False
+    valid_route = route in {"editable", "notebooklm", "imagegen", "outline-only", None} if isinstance(route, (str, type(None))) else False
     check("slide route is supported", valid_route)
     if not valid_route:
         return finish()
@@ -99,7 +99,7 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json", requir
         return finish()
 
     required = (("material", "lesson_plan", "outline", "teacher_notes") if route == "notebooklm"
-                else ("lesson_plan", "outline", "teacher_notes") if route == "editable" else ())
+                else ("lesson_plan", "outline", "teacher_notes") if route in {"editable", "imagegen"} else ())
     paths: dict[str, Path] = {}
     for role in required:
         check(f"source role {role} is mapped", isinstance(sources.get(role), str) and bool(sources[role].strip()))
@@ -126,7 +126,7 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json", requir
     if not isinstance(declared, list) or not all(isinstance(item, str) for item in declared):
         return finish()
     check("declared page IDs are unique", len(declared) == len(set(declared)))
-    if route in {"editable", "notebooklm", "outline-only"}:
+    if route in {"editable", "notebooklm", "imagegen", "outline-only"}:
         check("planned page IDs are present", bool(declared))
     if declared:
         for role in ("outline", "teacher_notes"):
@@ -166,10 +166,10 @@ def validate_bundle(folder: Path, manifest_name: str = "task-state.json", requir
                     check("slide output is a valid supported file", False)
         elif isinstance(steps, dict) and steps.get("slides") == "complete":
             check("completed slide step has an actual output", False)
-        elif route in {"editable", "notebooklm"}:
+        elif route in {"editable", "notebooklm", "imagegen"}:
             warnings.append("Slides have not been supplied; this is not a completed slide-deck check.")
     if require_complete:
-        check("complete bundle uses a PPTX generation route", route in {"editable", "notebooklm"})
+        check("complete bundle uses a PPTX generation route", route in {"editable", "notebooklm", "imagegen"})
         for role in ("lesson_plan", "outline", "teacher_notes"):
             check(f"complete bundle includes {role}", role in paths)
         slide_file = outputs.get("slides") if isinstance(outputs, dict) else None

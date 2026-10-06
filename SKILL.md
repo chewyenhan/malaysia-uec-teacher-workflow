@@ -4,7 +4,7 @@ description: Create source-grounded lesson plans, school-template concise plans,
 metadata:
   short-description: 教师备课工作流，含独中统考适配与自定义课程
   author: "Chew Yen Han（朱彦翰）"
-  version: "0.2.1"
+  version: "0.3.0"
 ---
 
 # 教师备课工作流｜独中统考适配 · 自定义课程
@@ -21,10 +21,10 @@ metadata:
 
 - **统考路线**：确认初中／高中、科目和考纲年份／版本，询问是否有考纲文件；教师没有时先按 syllabus-alignment.md 查官方公开考纲。能核实则记录版本和来源，不能核实则明确“未核对统考考纲”及待核项，不能虚构已完成核对。
 - **自定义路线**：询问教师自己的课程标准／教学目标，不强制套用统考考纲；获知没有外部标准时，基于教材并明确说明依据。
-- **PPT 路线**：让教师在 NotebookLM 来源驱动生成与 AI Agent 直接生成真实 PPTX（editable）之间选择，并确认风格。两条路线都必须先完成教案、大纲和逐页讲稿。
+- **PPT 路线**：必须向教师提供两条视觉课件方案：NotebookLM MCP 来源驱动生成，或 AI Agent 调用当前环境可用的生图工具制作整页图片式课件；同时说明图片式课件的文字不可像普通文本框那样逐字编辑。教师要求可编辑文字时，提供 `editable` 路线。每条路线都必须先完成教案、大纲和逐页讲稿。
 - **outline-only** 只在教师明确选择时作为交付范围。工具失败不能静默把完整任务改成此路线：保留四项任务，交付已完成文件，PPTX 标记为受阻并记录继续步骤；安装教程或提示词不能算已生成 PPTX。
 
-完整任务必须读取 first-run.md、syllabus-alignment.md、lesson-design.md、slides-routing.md 和 quality-and-resume.md；选择 NotebookLM 还必须读取 notebooklm-workflow.md；选择 editable 必须读取 agent-pptx-workflow.md。执行顺序为教材盘点 → 考纲／课程依据核证 → 完整教案 → 逐页大纲 → 逐页讲稿 → 选定路线制作 PPTX → 成品核对。最终回复逐一给出四项文件链接和状态，缺任何一项不得宣称整套完成。
+完整任务必须读取 first-run.md、syllabus-alignment.md、lesson-design.md、slides-routing.md 和 quality-and-resume.md；选择 NotebookLM 还必须读取 notebooklm-workflow.md；选择生图整页课件读取 imagegen-pptx-workflow.md；选择 editable 必须读取 agent-pptx-workflow.md。执行顺序为教材盘点 → 考纲／课程依据核证 → 完整教案 → 逐页大纲 → 逐页讲稿 → 选定路线制作 PPTX → 成品核对。最终回复逐一给出四项文件链接和状态，缺任何一项不得宣称整套完成。
 
 ## 两个独立选择
 
@@ -33,10 +33,11 @@ metadata:
 | 课程体系 | `uec` 独中／统考适配 | 核对初高中、科目和考纲版本；利用公开官方入口及本机缓存 |
 | 课程体系 | `custom` 自定义课程 | 使用教师提供／指定的课程标准或教学目标；没有考纲时依据教材备课，标注“未核对外部考纲” |
 | 课件制作 | `editable` 可编辑课件 | 使用当前环境可生成并检查真文字、图形的工具 |
-| 课件制作 | `notebooklm` 来源驱动课件 | 教师选择上传范围后使用 NotebookLM；实际检查导出格式与可编辑性 |
+| 课件制作 | `notebooklm` 来源驱动课件 | 使用 NotebookLM MCP；教师确认上传范围并完成登录；检查导出格式与可编辑性 |
+| 课件制作 | `imagegen` AI 生图课件 | 使用当前 Agent 实际可调用的图像生成工具；每页整页成图后组装为图片式 PPTX |
 | 课件制作 | `outline-only` 大纲＋讲稿 | 教师只需要这两项，或工具暂不可用；不冒充已完成 PPT |
 
-其他学校或补习教师教授统考，可选 `uec`；独中教师教授其他课程，可选 `custom`。自定义课程不自动同步董总考纲，也不等于自定义 PPT。已有明确课程体系或工具选择时不要重问；不明确且影响结果时才一次问齐。
+其他学校或补习教师教授统考，可选 `uec`；独中教师教授其他课程，可选 `custom`。首次选 `custom` 时先走一次自定义课程设置：询问课程标准依据、默认科目／年级／课时、教学与评量偏好，以及是否只用于本课或保存为今后默认值；教师确认后才写入配置。自定义课程不自动同步董总考纲，也不等于自定义 PPT。课程体系与 PPT 路线分别选择；已有明确值不重问。
 
 ## 按需读取
 
@@ -47,7 +48,8 @@ metadata:
 - 校本 Excel／Word 简略教案：[spreadsheet-adaptation.md](references/spreadsheet-adaptation.md)。
 - 选课件工具、每页大纲与讲稿：[slides-routing.md](references/slides-routing.md)。
 - **选择 AI Agent 直接生成 PPTX 时**，读 [agent-pptx-workflow.md](references/agent-pptx-workflow.md)：逐页规格、样张、真实文本框、批量制作、渲染和验收。
-- **选择 NotebookLM 时**，读 [notebooklm-workflow.md](references/notebooklm-workflow.md)：GitHub 配套工具、安装、登录、四份来源、生成、下载与恢复。
+- **选择 AI 生图整页课件时**，读 [imagegen-pptx-workflow.md](references/imagegen-pptx-workflow.md)：检查当前 Agent 的生图能力、逐页生成、组装图片式 PPTX 与视觉验收。
+- **选择 NotebookLM 时**，读 [notebooklm-workflow.md](references/notebooklm-workflow.md)：社区 MCP 配套、客户端配置、登录、四份来源、生成、下载与恢复。
 - 多产物、长任务、中断恢复或最终交付：[quality-and-resume.md](references/quality-and-resume.md)。
 - 教材权利、上传范围或公开分享：[copyright-and-privacy.md](references/copyright-and-privacy.md)。
 

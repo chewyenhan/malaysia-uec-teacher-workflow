@@ -6,10 +6,11 @@
 
 - 项目与 Agent Skill：[teng-lin/notebooklm-py](https://github.com/teng-lin/notebooklm-py)。
 - 安装依据：[作者安装文档](https://github.com/teng-lin/notebooklm-py/blob/main/docs/installation.md)。
+- MCP 配置与工具说明：[作者 MCP 指南](https://github.com/teng-lin/notebooklm-py/blob/main/docs/mcp-guide.md)。
 - 操作依据：[作者 Skill](https://github.com/teng-lin/notebooklm-py/blob/main/SKILL.md)。
 - 命令参考：[CLI 文档](https://github.com/teng-lin/notebooklm-py/blob/main/docs/cli-reference.md)。
 
-它是非 Google 官方的社区工具，依赖的内部接口可能变动。本项目只链接和调用，不复制第三方 Skill，也不要求安装旧 NotebookLM MCP。检查能力时不要把安装成功、凭据文件存在或 Python import 成功当成能连接服务。
+`notebooklm-py` 是非 Google 官方的社区工具，MCP 目前标为实验性／预览功能，工具名称与参数可能变化。本项目只提供连接说明，不复制第三方 Skill。检查能力时不要把安装成功、凭据文件存在或 Python import 成功当成能连接服务。
 
 ## 执行约束与成品边界
 
@@ -17,24 +18,50 @@
 
 完整备课任务要求 PPTX。只有 PDF 时保留为中间文件并标记 PPTX 尚未完成，不能当作四项完整交付。按实际输出修订或修正，使教案页码、大纲、讲稿和课件一致；生成服务偏离结构时不得只接受结果而不检查。
 
-## 1. 检查现有能力
+## 1. 检查或配置 NotebookLM MCP
 
-先看当前环境是否有可用的 NotebookLM 浏览器操作、CLI 或接口。已有可用工具就复用；不安装重复版本、不动其他 Agent 的配置。使用 CLI 时确认 `notebooklm --version`，再按当前版本的 `--help` 读取命令。
+用户选择 NotebookLM 时，优先检查当前 Agent 是否已连接 NotebookLM MCP，并做一次只读连通性检查。已有可用 MCP 就直接复用；不要把浏览器、CLI、Python SDK 说成 MCP。如果尚未连接，向教师说明需要配置本地 stdio MCP、安装 `notebooklm-py` 的 MCP extra，并由教师完成 Google 登录。不要重复添加已存在的 server，也不要覆盖其他配置。
 
-老师选择自动化路线但缺工具时，说明上述仓库、实际安装项目和 Google 登录需求。获得对应安装授权后，按当前平台与作者文档执行；使用既有 Python 环境或 CLI 工具安装方式，不默认下载完整源码、开发依赖或常驻 MCP。
-
-常规 Python 安装入口：
+上游提供的基本启动命令如下，使用前先读当前安装说明并确认本机有 `uvx`：
 
 ```bash
-python -m pip install "notebooklm-py[browser]"
-notebooklm skill install --help
+uvx --from "notebooklm-py[mcp]" notebooklm-mcp
 ```
 
-安装前核对现有环境；指定 Agent Skill 的目标目录以当前安装帮助和目标 Agent 的文档为准，检查路径再写入，避免覆写已有同名 Skill。Python 程序与 Agent Skill 都要可用；只复制 SKILL.md 不能完成程序安装。不要为解决系统包管理限制关闭保护设置，CLI 隔离安装可参考作者文档。
+对支持 stdio MCP 配置的客户端，基本 server 配置形如：
 
-本项目不执行安装时，也应给老师一个可复制请求：
+```bash
+{
+  "mcpServers": {
+    "notebooklm": {
+      "command": "uvx",
+      "args": ["--from", "notebooklm-py[mcp]", "notebooklm-mcp"]
+    }
+  }
+}
+```
 
-> 请检查我的环境是否已有 notebooklm-py。若没有，请依据 https://github.com/teng-lin/notebooklm-py 的发布版安装说明配置程序和适用于当前 AI Agent 的 Skill。保留已有配置，说明所需安装；登录由我完成。连接验证成功后，按教学工作流上传我已同意的四份资料、生成课件并做验收。
+上面的 JSON 是常见 stdio MCP 配置形状，不是对所有客户端的通用配置文件路径。作者当前安装器支持的客户端以其 CLI 文档为准；尚未被安装器支持的客户端应按该 Agent 自己的 MCP 配置文档手动添加，不要猜测 `notebooklm mcp install <client>` 一定支持它。保存配置后按客户端要求重启或重新加载 MCP，并验证工具实际出现且能连接。
+
+### 登录与认证
+
+使用配套 CLI 按当前版本文档登录，常见入口为：
+
+```bash
+notebooklm login
+```
+
+首次运行 CLI 时，可使用一次性方式执行登录命令：
+
+```bash
+uvx --from "notebooklm-py[mcp]" notebooklm login
+```
+
+认证由教师在自己的浏览器完成。不要要求教师把密码、Cookie、token 或 storage state 发到聊天。认证成功后重启／重连 MCP，再用只读检查确认会话可访问 NotebookLM。凭据存在不等于连接成功。
+
+需要教师或其他 Agent 代为配置时，给出这段可复制请求：
+
+> 请检查我的环境是否已有 NotebookLM MCP。若没有，请先读取 https://github.com/teng-lin/notebooklm-py/blob/main/docs/installation.md 和 https://github.com/teng-lin/notebooklm-py/blob/main/docs/mcp-guide.md，按当前 AI Agent 的官方 MCP 配置文档接入 `notebooklm-py[mcp]`。保留已有配置，不猜客户端安装命令；登录由我完成。连接验证成功后，先列出本课将上传的教材、教案、大纲与讲稿，等我确认上传范围，再生成课件并验收。
 
 ## 2. Google 登录与连接验证
 

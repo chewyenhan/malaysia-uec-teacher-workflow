@@ -9,6 +9,11 @@ teaching:
   curriculum_route: ""          # uec / custom；未填写则依据本课请求确定
   curriculum: ""                # 实际课程体系名称，不以学校身份推断
   custom_standards: ""          # 文件／公开网址；也可“仅依据教材与教学目标”
+  custom_course_profile:
+    standards_name: ""          # 教师确认的课程／标准名称
+    evidence_basis: ""           # 文件／网址／教师目标／仅以教材为准
+    default_teaching_preferences: []
+    default_assessment_preferences: []
   default_subject: ""
   default_level: ""
   default_period_minutes: null
@@ -26,7 +31,7 @@ outputs:
     template_path: ""
   slides:
     enabled_by_default: true
-    preferred_route: "auto"     # auto / editable / notebooklm / outline-only
+    preferred_route: "auto"     # auto / editable / notebooklm / imagegen / outline-only
     preferred_style: ""
   record_task_state: true       # 多产物或需恢复时
 

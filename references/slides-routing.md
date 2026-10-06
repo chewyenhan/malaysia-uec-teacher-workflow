@@ -7,14 +7,17 @@
 | 路线 | 适合需求 | 必须说明 |
 |---|---|---|
 | `editable` | 真文字、图形、公式可继续修改 | 当前工具能否实际生成、打开与检查 PPTX |
-| `notebooklm` | 用教师来源生成统一视觉课件 | 上传范围、登录、实际格式及可编辑程度 |
+| `notebooklm` | 用教师来源生成统一视觉课件 | 通过 NotebookLM MCP；上传范围、登录、实际格式及可编辑程度 |
+| `imagegen` | 由 AI 生图工具逐页生成完整画面，再组装成 PPTX | 当前 Agent 是否真能调用生图工具；文字通常烘焙在图片中，不能像普通文本框逐字编辑 |
 | `outline-only` | 教师明确只需大纲讲稿 | 哪些已完成，哪些课件步骤未执行 |
 
-缺失才同轮确认投影／自学用途、课时、必要页数、风格、编辑需求及费用偏好。教师指定路线时沿用；不可用则说明缺口，不静默更换已选路线。
+每次都向教师明确展示 NotebookLM MCP 与 `imagegen` 两种视觉课件方案；若教师有文字编辑需求，另外指出 `editable`。缺失才同轮确认投影／自学用途、课时、必要页数、风格、编辑需求及费用偏好。教师指定路线时沿用；不可用则说明缺口，不静默更换已选路线。
 
 原生简报工具优先满足精确中文、公式、图表和可编辑需求。图片可以做视觉素材，不把本应可编辑的文字画进图片。特殊视觉路线先做一页代表样张，确认后再批量制作。
 
-NotebookLM 的工具来源与完整步骤见 [notebooklm-workflow.md](notebooklm-workflow.md)。已有可用浏览器或接口就复用，不强制安装 MCP。
+NotebookLM 的 MCP 工具来源与完整步骤见 [notebooklm-workflow.md](notebooklm-workflow.md)。用户选此路线时，先检查 MCP；若未接入，给出标准 MCP 配置与按客户端安装方法，不把浏览器／CLI 假称为 MCP。
+
+AI 生图整页路线按 [imagegen-pptx-workflow.md](imagegen-pptx-workflow.md) 执行。图片式课件适合追求视觉表现的场景，不能承诺文字可编辑；当前运行环境没有可调用的生图能力时，先说明受阻，不能静默换成别的路线。
 
 AI Agent 直接生成 PPTX 必须按 [agent-pptx-workflow.md](agent-pptx-workflow.md) 执行：逐页规格 → 样张 → 批量组装 → 页序与讲稿对账 → 逐页渲染验收。
 

@@ -112,6 +112,12 @@ class LessonBundleTests(unittest.TestCase):
         self.run_check()
         self.assertTrue(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
 
+    def test_imagegen_route_passes_complete_pptx_structure(self):
+        self.state["slide_route"] = "imagegen"
+        self.prepare_complete()
+        self.run_check()
+        self.assertTrue(bundle.validate_bundle(self.folder, require_complete=True)["ok"])
+
     def test_pdf_cannot_complete_pptx_delivery(self):
         self.prepare_complete()
         (self.folder / "slides.pdf").write_bytes(b"%PDF-1.7")
