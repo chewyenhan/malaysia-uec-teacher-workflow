@@ -2,7 +2,7 @@
 ### 独中统考适配 · 自定义课程
 
 [![Status](https://img.shields.io/badge/status-public%20beta-f59e0b)](#项目状态)
-[![Version](https://img.shields.io/badge/version-0.3.0-2563eb)](#本次更新)
+[![Version](https://img.shields.io/badge/version-0.3.2-2563eb)](#本次更新)
 [![License](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-16a34a)](LICENSE.md)
 
 **提供课文与教学要求，得到彼此配套的教案、课件、讲稿和评量。**
@@ -127,6 +127,7 @@ notebooklm mcp install claude-desktop  # 按实际客户端选择受支持的安
 - 用本课任务记录保存进度；登录失效或远程生成未结束，不从头再做。
 - 问题页单独修正，记录依据并复查关联文件。
 - 保存“通过多少项、修正哪里、哪些仍待核”的验收记录。
+- 由未参与编写的 agent 核对每项活动、实际答题格、评量及适用原始依据，修复后复审；当前环境无 agent 时明确标独立终审未完成。
 
 离线结构检查不会联网、上传或更改材料：
 
@@ -149,11 +150,13 @@ python scripts/sync_uec_syllabi.py --level senior
 
 ## 本次更新
 
+v0.3.2 将活动写成可直接执行的教学步骤，要求所有书写任务对应练习单实际答题格，并由独立 agent 全量终审原教材、课程依据、配套材料和评量操作。明确形成性与总结性按用途区分，每课说明总结性安排或衔接，不强制每课考试；无 agent 或缺少应有依据时如实标未完成／未核实。详见 [课堂操作与独立终审](references/lesson-operation-audit.md)。
+
 v0.3.1 明确跨科教案与个人初中历史教案的教学闭环对齐、适用边界，并补齐 NotebookLM 无 MCP 首次接入、CLI 备用、本机 PPTX 保存与云端下载说明。v0.3.0 加入自定义课程首次设置与可复用默认值；把 NotebookLM MCP 和 AI 生图整页课件设为必须介绍的两种视觉方案，补齐跨 Agent 生图步骤与图片式 PPTX 验收，并让离线检查器识别该路线。`editable` 仍用于明确需要可编辑文字的课件。此前 v0.2.1 加强默认四项交付、完整教学模板和最终完整性检查；v0.2.0 扩展两种课程入口并补齐 NotebookLM、恢复记录和离线检查。
 
 ## 项目状态
 
-**公开 beta。** 新版自定义数学示例与本地检查已验证；不能把这些结果当成所有学科、国家课程或第三方服务均已端到端验证。NotebookLM 的真实账户生成受账号、额度、接口和教师上传授权影响，首次使用应以自己的小课题试跑。
+**公开 beta。** 自定义数学案例为 v0.3.2 前的历史示例，仅有旧文本作者自查与离线结构验证，尚未按新增的配套材料及独立终审规则重新验收。当前规则与本地检查的验证不能当成所有学科、国家课程或第三方服务均已端到端验证。NotebookLM 的真实账户生成受账号、额度、接口和教师上传授权影响，首次使用应以自己的小课题试跑。
 
 核心版本免费公开。已发布版本的许可证保持有效；商业授权、培训与校本定制仍依以下授权说明办理。
 
@@ -197,3 +200,4 @@ The shared teaching core produces aligned lesson plans, concise school-template 
 The existing repository and invocation identifier remain `malaysia-uec-teacher-workflow`. No textbooks, school records or login credentials are bundled.
 
 AI Agent 的逐页制作步骤见 [直接生成PPTX](references/agent-pptx-workflow.md)。最终四项交付的结构检查使用 `python scripts/check_lesson_bundle.py path/to/lesson-folder --require-complete`；普通检查可用于生成前准备检查，不能证明最终完成。
+

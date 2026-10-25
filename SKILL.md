@@ -4,7 +4,7 @@ description: Create source-grounded lesson plans, school-template concise plans,
 metadata:
   short-description: 教师备课工作流，含独中统考适配与自定义课程
   author: "Chew Yen Han（朱彦翰）"
-  version: "0.3.1"
+  version: "0.3.2"
 ---
 
 # 教师备课工作流｜独中统考适配 · 自定义课程
@@ -45,6 +45,7 @@ metadata:
 - 读取教材正文、表格、图注、公式及练习：[material-intake.md](references/material-intake.md)。
 - 核证统考或教师指定考纲：[syllabus-alignment.md](references/syllabus-alignment.md)。
 - 详细教案、评量、补教及跨科活动：[lesson-design.md](references/lesson-design.md)。
+- 每次生成或修订教学材料必读：[课堂操作与独立终审](references/lesson-operation-audit.md)。逐步操作和评量直接写入教学过程，书写任务对应实际答题格；交付前实际派独立 agent 核对最终配套文件、原教材及适用课程／评量依据，修复后复审。
 - 校本 Excel／Word 简略教案：[spreadsheet-adaptation.md](references/spreadsheet-adaptation.md)。
 - 选课件工具、每页大纲与讲稿：[slides-routing.md](references/slides-routing.md)。
 - **选择 AI Agent 直接生成 PPTX 时**，读 [agent-pptx-workflow.md](references/agent-pptx-workflow.md)：逐页规格、样张、真实文本框、批量制作、渲染和验收。
@@ -61,6 +62,7 @@ metadata:
 4. **先完成教学设计。** 每个目标对应学生活动、评量证据、达标标准、即时补教和延伸。时间合计须符合本课；不给所有学科硬套历史活动或固定 Bloom 层级。
 5. **派生本次产物。** 从同一组目标与来源生成简略教案、大纲、逐页讲稿、课件和练习。页面采用稳定编号 `P01`、`P02` 等，修订后同步对应讲稿。先做代表页检查再批量制作；默认交付完整四项；仅在教师明确缩小范围时按其选择交付。
 6. **检查与修正。** 打开或渲染真实成品，核对文字、事实、公式、版面、页序及模板保护；发现问题修正相应文件并复查关联产物。保存具体结果，不能凭文件存在判定内容正确。
+7. **独立终审。** 按 lesson-operation-audit.md 由未参与编写的 agent 全量核对本次范围内每项活动、实际答题格、评量用途与操作、教材和适用原始规范。失败须修复复审；缺依据或缺 agent 如实标未核实／未完成，不能用作者自评或结构检查代替。
 
 ## 可靠交付
 
@@ -85,14 +87,19 @@ lesson-output/{subject}-{grade}-{topic}/
 ├── slides-outline.md
 ├── teacher-notes.md
 ├── teaching-slides.pptx       # 真正生成并验证后才交付
+├── activity-alignment.md      # 任务、格位、目标、评量及反馈的逐项对应
+├── independent-audit.md       # 独立终审及修复复审；缺工具如实标未完成
 ├── task-state.json            # 多产物／需恢复时
 └── qa-report.md               # 实际验收记录
 ```
 
 教师自己的文件命名可以沿用，在任务记录中映射即可。NotebookLM 的课文来源必须是实际教材／教师认可的完整转录，内容清单不能替代课文。
 
+所有实际使用的练习单、卡片、图表及作业等配套，随包提供源文和最终打印／展示版；不使用的类别标不适用。评量按用途区分诊断性、形成性和总结性；课末计分不自动等于总结性。每课说明总结性评量安排或后续衔接，不强塞考试。
+
 完整四项交付使用 `--require-complete` 最终检查；普通结构检查仅证明准备状态。最终结果必须包含四项成品、风格、实际页数、内容／画面检查计数和待核项。
 
 生成后和后续修改时必须执行 [PPT同步关卡](references/ppt-synchronization.md)，保存逐页映射及四份成品摘要；最终验收不得跳过。
 
 选择风格和制作前必须读取 [完整PPT风格库](references/slide-style-library.md)；将所选风格落实到每页构图、配色和文字布局，并以样张检查全片一致性。
+

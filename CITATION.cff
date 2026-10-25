@@ -5,9 +5,10 @@ type: software
 authors:
   - family-names: "Chew"
     given-names: "Yen Han"
-version: "0.2.1"
-date-released: "2026-10-06"
+version: "0.3.2"
+date-released: "2026-10-25"
 license:
   - "CC-BY-NC-SA-4.0"
   - "MIT"
 repository-code: "https://github.com/chewyenhan/malaysia-uec-teacher-workflow"
+
